@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Result - Temporary File Sharing{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4">Files Uploaded Successfully</h1>
+        <div class="alert alert-success" role="alert">
+            Your files have been uploaded and zipped together. They are now ready to share!
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">File Details</h5>
+                <p class="card-text"><strong>Zip Filename:</strong> {{ filename }}</p>
+                <p class="card-text"><strong>Expiration:</strong> This file will be automatically deleted after {{ delete_after }} minute{% if delete_after != 1 %}s{% endif %}.</p>
+            </div>
+        </div>
+        
+        <h5>Share this link:</h5>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" value="{{ download_url }}" readonly>
+            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('{{ download_url }}')">Copy</button>
+        </div>
+        <p>Anyone with this link can download the zip file.</p>
+        
+        <div class="mt-4">
+            <a href="{{ download_url }}" class="btn btn-primary shadow-lg me-2">View Download Page</a>            
+            <a href="{{ url_for('upload_file') }}" class="btn btn-secondary">Upload More Files</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyToClipboard(link) {
+    var tempInput = document.createElement("input");
+    tempInput.value = link;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    alert("Link copied to clipboard!");
+}
+</script>
+{% endblock %}
