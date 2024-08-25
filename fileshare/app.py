@@ -145,4 +145,4 @@ def internal_error(error):
     return render_template('error.html', error_message="Internal server error"), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=True)
