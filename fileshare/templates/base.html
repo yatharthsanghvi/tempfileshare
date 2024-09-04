@@ -6,31 +6,63 @@
     <title>{% block title %}Temporary File Sharing{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f8f9fa;
+        }
         body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background-color: var(--background-color);
         }
         main {
             flex: 1;
         }
         .navbar-brand {
             font-weight: bold;
+            color: var(--primary-color) !important;
         }
         .footer {
-            background-color: #f8f9fa;
+            background-color: #e9ecef;
             padding: 1rem 0;
             margin-top: auto;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #3a7bc8;
+            border-color: #3a7bc8;
+        }
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('home') }}">
+                <a class="navbar-brand animate__animated animate__fadeIn" href="{{ url_for('home') }}">
                     <i class="fas fa-share-alt me-2"></i>Temporary File Sharing
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,13 +71,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('home') }}"><i class="fas fa-home me-1"></i>Home</a>
+                            <a class="nav-link animate__animated animate__fadeIn" href="{{ url_for('home') }}"><i class="fas fa-home me-1"></i>Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('upload_file') }}"><i class="fas fa-upload me-1"></i>Upload</a>
+                            <a class="nav-link animate__animated animate__fadeIn animate__delay-1s" href="{{ url_for('upload_file') }}"><i class="fas fa-upload me-1"></i>Upload</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('download_page') }}"><i class="fas fa-download me-1"></i>Download</a>
+                            <a class="nav-link animate__animated animate__fadeIn animate__delay-2s" href="{{ url_for('download_page') }}"><i class="fas fa-download me-1"></i>Download</a>
                         </li>
                     </ul>
                 </div>
@@ -53,7 +85,7 @@
         </nav>
     </header>
 
-    <main class="container my-4">
+    <main class="container my-5">
         {% block content %}{% endblock %}
     </main>
 
@@ -64,6 +96,21 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const animateOnScrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach((element) => {
+            animateOnScrollObserver.observe(element);
+        });
+    });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
