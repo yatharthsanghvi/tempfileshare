@@ -5,21 +5,33 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <h1 class="mb-4">File Ready for Download</h1>
+        <h1 class="mb-4 text-center">File Ready for Download</h1>
+        
         <div class="alert alert-info shadow-sm" role="alert">
-            You are about to download a file from our temporary file sharing service.
+            <i class="fas fa-info-circle me-2"></i>You are about to download a file from our temporary file sharing service.
         </div>
-        <div class="card mb-4 shadow">
+        
+        <div class="card mb-4 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title">File Details</h5>
-                <p class="card-text"><strong>Filename:</strong> {{ filename }}</p>
-                <p class="card-text"><strong>Expiration:</strong> This file will be automatically deleted in {{ delete_after + 1 }} minute{% if delete_after != 1 %}s{% endif %}.</p>
+                <h5 class="card-title"><i class="fas fa-file-archive me-2"></i>File Details</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Filename:</strong> {{ filename }}</li>
+                    <li class="list-group-item"><strong>Expiration:</strong> This file will be automatically deleted in {{ delete_after+1}} minute{% if delete_after != 1 %}s{% endif %}.</li>
+                </ul>
             </div>
         </div>
-        <div class="mt-4">
-            <a href="{{ url_for('initiate_download', file_id=file_id) }}" class="btn btn-primary btn-lg shadow-lg">Download File</a>
+        
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('initiate_download', file_id=file_id) }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-download me-2"></i>Download File
+            </a>
         </div>
-        <p class="mt-3 text-muted">By downloading this file, you accept that we are not responsible for its contents.</p>
+        
+        <div class="mt-4">
+            <div class="alert alert-warning" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>By downloading this file, you accept that we are not responsible for its contents.
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
