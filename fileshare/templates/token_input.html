@@ -4,15 +4,29 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <h1 class="mb-4">Enter Your Token</h1>
-        <form method="POST" action="{{ url_for('download_page') }}">
-            <div class="mb-3">
-                <label for="token" class="form-label">Download Token</label>
-                <input type="text" class="form-control" id="token" name="token" placeholder="Enter your token" required>
+    <div class="col-md-6">
+        <h1 class="mb-4 text-center">Enter Your Token</h1>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form action="{{ url_for('download_page') }}" method="post">
+                    <div class="mb-3">
+                        <label for="token" class="form-label">Download Token:</label>
+                        <input type="text" class="form-control form-control-lg" id="token" name="token" required placeholder="Enter your token here">
+                        <div class="form-text">Enter the token you received after uploading files.</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-key me-2"></i>Submit Token
+                        </button>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary shadow-lg">Submit</button>
-        </form>
+        </div>
+        
+        <div class="mt-4">
+            <h5><i class="fas fa-info-circle me-2"></i>Don't have a token?</h5>
+            <p>If you want to share files, you need to <a href="{{ url_for('upload_file') }}">upload them first</a> to get a token.</p>
+        </div>
     </div>
 </div>
 {% endblock %}
