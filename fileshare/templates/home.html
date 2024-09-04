@@ -5,10 +5,49 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8 text-center">
-        <h1 class="mb-4">Welcome to Temporary File Sharing</h1>
-        <p class="lead">Easily upload multiple files and share them temporarily. Files are automatically deleted after a specified time.</p>
-        <p>To get started, click the button below:</p>
-        <a href="{{ url_for('upload_file') }}" class="btn btn-primary btn-lg shadow-lg">Upload a File</a>
+        <h1 class="display-4 mb-4">Welcome to Temporary File Sharing</h1>
+        <p class="lead mb-5">Quickly and securely share files that automatically delete after a set time.</p>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-upload fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Upload Files</h5>
+                        <p class="card-text">Share multiple files by uploading them to our secure server.</p>
+                        <a href="{{ url_for('upload_file') }}" class="btn btn-primary">Upload Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-download fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Download Files</h5>
+                        <p class="card-text">Use the provided token to download shared files securely.</p>
+                        <a href="{{ url_for('download_page') }}" class="btn btn-success">Download Files</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <h2 class="h4 mb-4">How It Works</h2>
+            <div class="row text-start">
+                <div class="col-md-4 mb-3">
+                    <h3 class="h5"><i class="fas fa-cloud-upload-alt me-2 text-primary"></i>1. Upload</h3>
+                    <p>Select your files and set an expiration time.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h3 class="h5"><i class="fas fa-key me-2 text-warning"></i>2. Share Token</h3>
+                    <p>Get a unique token for your uploaded files.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h3 class="h5"><i class="fas fa-trash-alt me-2 text-danger"></i>3. Auto-Delete</h3>
+                    <p>Files are automatically removed after expiration.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
