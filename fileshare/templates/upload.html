@@ -2,8 +2,59 @@
 
 {% block title %}Upload - Temporary File Sharing{% endblock %}
 
+{% block extra_css %}
+<style>
+    .drop-zone {
+        max-width: 100%;
+        height: 200px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 500;
+        font-size: 20px;
+        cursor: pointer;
+        color: #cccccc;
+        border: 4px dashed #009578;
+        border-radius: 10px;
+    }
+
+    .drop-zone--over {
+        border-style: solid;
+    }
+
+    .drop-zone__input {
+        display: none;
+    }
+
+    .drop-zone__thumb {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #cccccc;
+        background-size: cover;
+        position: relative;
+    }
+
+    .drop-zone__thumb::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 5px 0;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.75);
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center animate__animated animate__fadeIn">
     <div class="col-md-8">
         <h1 class="mb-4">Upload Files</h1>
         <div class="card shadow-sm">
@@ -11,13 +62,17 @@
                 <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="uploadForm">
                     <div class="mb-3">
                         <label for="fileInput" class="form-label">Select files:</label>
-                        <input type="file" class="form-control" id="fileInput" name="file" multiple required>
+                        <div class="drop-zone">
+                            <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                            <input type="file" name="file" class="drop-zone__input" id="fileInput" multiple required>
+                        </div>
+                        <div id="fileList" class="mt-2"></div>
                         <div class="invalid-feedback">Please select at least one file to upload.</div>
                     </div>
                     <div class="mb-3">
                         <label for="deleteAfter" class="form-label">Delete after (minutes, max 60):</label>
-                        <input type="number" class="form-control" id="deleteAfter" name="delete_after" min="1" max="60" value="60" required>
-                        <div class="invalid-feedback">Please enter a valid time between 1 and 60 minutes.</div>
+                        <input type="range" class="form-range" id="deleteAfter" name="delete_after" min="1" max="60" value="60" required>
+                        <output for="deleteAfter" id="deleteAfterOutput">60</output> minutes
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg">
@@ -28,7 +83,7 @@
             </div>
         </div>
         
-        <div class="mt-4">
+        <div class="mt-4 animate-on-scroll">
             <h5>File Upload Guidelines:</h5>
             <ul class="list-group">
                 <li class="list-group-item"><i class="fas fa-info-circle me-2 text-primary"></i>Maximum file size: 16MB</li>
@@ -42,16 +97,91 @@
 
 {% block scripts %}
 <script>
+document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+  const dropZoneElement = inputElement.closest(".drop-zone");
+
+  dropZoneElement.addEventListener("click", (e) => {
+    inputElement.click();
+  });
+
+  inputElement.addEventListener("change", (e) => {
+    if (inputElement.files.length) {
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+      updateFileList(inputElement.files);
+    }
+  });
+
+  dropZoneElement.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZoneElement.classList.add("drop-zone--over");
+  });
+
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZoneElement.addEventListener(type, (e) => {
+      dropZoneElement.classList.remove("drop-zone--over");
+    });
+  });
+
+  dropZoneElement.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) {
+      inputElement.files = e.dataTransfer.files;
+      updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+      updateFileList(e.dataTransfer.files);
+    }
+    dropZoneElement.classList.remove("drop-zone--over");
+  });
+});
+
+function updateThumbnail(dropZoneElement, file) {
+  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+  if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+    dropZoneElement.querySelector(".drop-zone__prompt").remove();
+  }
+  if (!thumbnailElement) {
+    thumbnailElement = document.createElement("div");
+    thumbnailElement.classList.add("drop-zone__thumb");
+    dropZoneElement.appendChild(thumbnailElement);
+  }
+  thumbnailElement.dataset.label = file.name;
+  if (file.type.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+    };
+  } else {
+    thumbnailElement.style.backgroundImage = null;
+  }
+}
+
+function updateFileList(files) {
+  const fileList = document.getElementById('fileList');
+  fileList.innerHTML = '';
+  for (let i = 0; i < files.length; i++) {
+    const fileItem = document.createElement('div');
+    fileItem.classList.add('alert', 'alert-info', 'mt-2');
+    fileItem.innerHTML = `<i class="fas fa-file me-2"></i>${files[i].name}`;
+    fileList.appendChild(fileItem);
+  }
+}
+
+const deleteAfterSlider = document.getElementById('deleteAfter');
+const deleteAfterOutput = document.getElementById('deleteAfterOutput');
+deleteAfterSlider.addEventListener('input', function() {
+  deleteAfterOutput.textContent = this.value;
+});
+
 (function () {
-    'use strict'
-    var form = document.getElementById('uploadForm')
-    form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-        }
-        form.classList.add('was-validated')
-    }, false)
+  'use strict'
+  var form = document.getElementById('uploadForm')
+  form.addEventListener('submit', function (event) {
+    if (!form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    form.classList.add('was-validated')
+  }, false)
 })()
 </script>
 {% endblock %}
